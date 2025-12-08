@@ -1,1 +1,1 @@
-export { default } from '@hexlet/testing-task-manager';
+export { default } from '@hexlet/testing-task-manager'

@@ -15,5 +15,20 @@ export const testUsers = {
     login: 'user2',
     password: 'pass2',
   },
-};
+}
 
+export function generateUserData() {
+  return {
+    email: `test${Date.now()}@example.com`,
+    firstName: 'Test',
+    lastName: 'User',
+  }
+}
+
+export function generateEditedUserData() {
+  return {
+    email: `edited${Date.now()}@example.com`,
+    firstName: 'Edited',
+    lastName: 'Name',
+  }
+}

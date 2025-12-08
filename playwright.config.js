@@ -1,11 +1,10 @@
 // @ts-check
-import { defineConfig, devices } from '@playwright/test';
-import process from 'node:process';
+import { defineConfig, devices } from '@playwright/test'
+import process from 'node:process'
 
-import dotenv from 'dotenv';
+import dotenv from 'dotenv'
 
-
-dotenv.config();
+dotenv.config()
 
 /**
  * @see https://playwright.dev/docs/test-configuration
@@ -31,7 +30,7 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-/*
+    /*
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
@@ -69,5 +68,4 @@ export default defineConfig({
     url: process.env.BASE_URL || 'http://localhost:5173',
     reuseExistingServer: !process.env.CI,
   },
-});
-
+})

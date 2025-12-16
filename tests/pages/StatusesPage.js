@@ -37,7 +37,7 @@ export class StatusesPage extends BasePage {
   }
 
   async getStatusRowBySlug(slug) {
-    return await super.getRowByCellText(slug, COLUMN_INDEXES.SLUG)
+    return await super.getRowLocatorByCellText(slug, COLUMN_INDEXES.SLUG)
   }
 
   async getStatusCheckboxBySlug(slug) {
@@ -95,7 +95,7 @@ export class StatusesPage extends BasePage {
     return {
       name: this.page.locator(SELECTORS.STATUS_NAME_INPUT),
       slug: this.page.locator(SELECTORS.STATUS_SLUG_INPUT),
-      saveButton: this.page.locator(SELECTORS.SAVE_BUTTON),
+      saveButton: this.getSaveButton(),
     }
   }
 

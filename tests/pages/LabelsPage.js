@@ -33,7 +33,7 @@ export class LabelsPage extends BasePage {
   }
 
   async getLabelRowByName(name) {
-    return await super.getRowByCellText(name, COLUMN_INDEXES.NAME)
+    return await super.getRowLocatorByCellText(name, COLUMN_INDEXES.NAME)
   }
 
   async clickEditLabel(name) {
@@ -43,7 +43,7 @@ export class LabelsPage extends BasePage {
   }
 
   async deleteLabel(name) {
-    await super.deleteByText(name)
+    await super.deleteByCellText(name, COLUMN_INDEXES.NAME)
   }
 
   async selectAllLabels() {
@@ -82,7 +82,7 @@ export class LabelsPage extends BasePage {
     await this.page.locator(SELECTORS.LABEL_NAME_INPUT).waitFor({ state: 'visible' })
     return {
       name: this.page.locator(SELECTORS.LABEL_NAME_INPUT),
-      saveButton: this.page.locator(SELECTORS.SAVE_BUTTON),
+      saveButton: this.getSaveButton(),
     }
   }
 
@@ -139,4 +139,3 @@ export class LabelsPage extends BasePage {
     return { initialCount, firstLabelName }
   }
 }
-

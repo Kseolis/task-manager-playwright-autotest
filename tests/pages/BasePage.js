@@ -6,6 +6,14 @@ export class BasePage {
     this.config = config
   }
 
+  getSaveButton() {
+    return this.page.getByRole('button', { name: /save/i })
+  }
+
+  getDeleteButton() {
+    return this.page.getByRole('button', { name: /delete/i })
+  }
+
   async goto() {
     await this.page.goto(this.config.url)
     await this.config.tableLocator.waitFor({ state: 'visible' })
@@ -22,7 +30,7 @@ export class BasePage {
 
   async deleteAllSelected() {
     const initialRows = await this.getAllRows()
-    await this.config.deleteButtonLocator.click()
+    await this.getDeleteButton().click()
     await this.page.waitForFunction(
       (expectedCount, selector) => {
         const rows = document.querySelectorAll(selector)
@@ -43,23 +51,23 @@ export class BasePage {
     return await this.page.locator(SELECTORS.TABLE_BODY_ROW).all()
   }
 
-  async getRowByText(text) {
+  getRowLocatorByText(text) {
     return this.page.locator(`tr:has-text("${text}")`)
   }
 
-  getRowByCellText(text, columnIndex) {
+  getRowLocatorByCellText(text, columnIndex) {
     const quotedText = JSON.stringify(String(text))
     const columnNumber = Number(columnIndex) + 1
     return this.page.locator(`tbody tr:has(td:nth-child(${columnNumber}):has-text(${quotedText}))`)
   }
 
   async getCheckboxByCellText(text, columnIndex) {
-    const row = await this.getRowByCellText(text, columnIndex)
+    const row = await this.getRowLocatorByCellText(text, columnIndex)
     return row.locator(SELECTORS.TABLE_CELL).nth(COLUMN_INDEXES.CHECKBOX).locator(SELECTORS.TABLE_CELL_CHECKBOX)
   }
 
   async getCheckboxByText(text) {
-    const row = await this.getRowByText(text)
+    const row = this.getRowLocatorByText(text)
     return row.locator(SELECTORS.TABLE_CELL).nth(COLUMN_INDEXES.CHECKBOX).locator(SELECTORS.TABLE_CELL_CHECKBOX)
   }
 
@@ -67,7 +75,7 @@ export class BasePage {
     const initialCount = await this.getCount()
     const checkbox = await this.getCheckboxByCellText(text, columnIndex)
     await checkbox.check()
-    await this.config.deleteButtonLocator.click()
+    await this.getDeleteButton().click()
     await this.page.waitForFunction(
       (expectedCount, selector) => {
         const rows = document.querySelectorAll(selector)
@@ -83,7 +91,7 @@ export class BasePage {
     const initialCount = await this.getCount()
     const checkbox = await this.getCheckboxByText(text)
     await checkbox.check()
-    await this.config.deleteButtonLocator.click()
+    await this.getDeleteButton().click()
     await this.page.waitForFunction(
       (expectedCount, selector) => {
         const rows = document.querySelectorAll(selector)
@@ -102,7 +110,7 @@ export class BasePage {
   }
 
   async saveForm() {
-    await this.page.locator(SELECTORS.SAVE_BUTTON).click()
+    await this.getSaveButton().click()
     await Promise.race([
       this.config.tableLocator.waitFor({ state: 'visible', timeout: TIMEOUTS.MEDIUM }).catch(() => {}),
       this.config.firstInputLocator.waitFor({ state: 'visible', timeout: TIMEOUTS.MEDIUM }).catch(() => {}),

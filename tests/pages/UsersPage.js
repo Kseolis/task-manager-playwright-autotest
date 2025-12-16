@@ -41,7 +41,7 @@ export class UsersPage extends BasePage {
   }
 
   async getUserRowByEmail(email) {
-    return await super.getRowByCellText(email, COLUMN_INDEXES.EMAIL)
+    return await super.getRowLocatorByCellText(email, COLUMN_INDEXES.EMAIL)
   }
 
   async getUserCheckboxByEmail(email) {
@@ -102,7 +102,7 @@ export class UsersPage extends BasePage {
       email: this.page.locator(SELECTORS.USER_EMAIL_INPUT),
       firstName: this.page.locator(SELECTORS.USER_FIRST_NAME_INPUT),
       lastName: this.page.locator(SELECTORS.USER_LAST_NAME_INPUT),
-      saveButton: this.page.locator(SELECTORS.SAVE_BUTTON),
+      saveButton: this.getSaveButton(),
     }
   }
 

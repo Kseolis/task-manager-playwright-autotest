@@ -6,6 +6,14 @@ export class BasePage {
     this.config = config
   }
 
+  /**
+   * Возвращает локатор таблицы для текущей страницы
+   * @returns {Object} Локатор таблицы
+   */
+  getTableLocator() {
+    return this.config?.tableLocator || this.page.locator(SELECTORS.TABLE)
+  }
+
   getSaveButton() {
     return this.page.getByRole('button', { name: /save/i })
   }

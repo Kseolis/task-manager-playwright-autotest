@@ -1,4 +1,4 @@
-# QA Auto Engineer JavaScript Project 90
+# Task Manager Playwright Autotests
 
 Проект содержит автотесты UI на **Playwright** для учебного Task Manager.
 

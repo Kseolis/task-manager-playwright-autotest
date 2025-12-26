@@ -38,7 +38,7 @@ test.describe('Создание статусов', () => {
       statusesPage,
       initialCount,
       statusData.slug,
-      (slug) => statusesPage.isStatusVisible(slug),
+      slug => statusesPage.isStatusVisible(slug),
     )
 
     const verification = await statusesPage.verifyStatusData(statusData.slug, statusData)
@@ -59,7 +59,7 @@ test.describe('Просмотр списка статусов', () => {
     await statusesPage.goto()
     const rows = await statusesPage.getAllStatusRows()
 
-    await verifyRowsData(rows, (row) => statusesPage.getStatusRowData(row), ['name', 'slug'])
+    await verifyRowsData(rows, row => statusesPage.getStatusRowData(row), ['name', 'slug'])
   })
 })
 
@@ -88,7 +88,7 @@ test.describe('Редактирование статусов', () => {
     await verifyEntityEdited(
       statusesPage,
       editedData.slug,
-      (slug) => statusesPage.isStatusVisible(slug),
+      slug => statusesPage.isStatusVisible(slug),
       (slug, data) => statusesPage.verifyStatusData(slug, data),
       editedData,
     )
@@ -105,7 +105,7 @@ test.describe('Удаление статусов', () => {
       statusesPage,
       initialCount,
       firstStatusSlug,
-      (slug) => statusesPage.isStatusVisible(slug),
+      slug => statusesPage.isStatusVisible(slug),
     )
   })
 })

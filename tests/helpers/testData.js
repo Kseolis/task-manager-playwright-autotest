@@ -17,7 +17,7 @@ export const testUsers = {
   },
 }
 
-export function generateUserData() {
+export const generateUserData = () => {
   const ts = Date.now()
   return {
     email: `test${ts}@example.com`,
@@ -26,7 +26,7 @@ export function generateUserData() {
   }
 }
 
-export function generateEditedUserData() {
+export const generateEditedUserData = () => {
   const ts = Date.now()
   return {
     email: `edited${ts}@example.com`,
@@ -35,7 +35,7 @@ export function generateEditedUserData() {
   }
 }
 
-export function generateStatusData() {
+export const generateStatusData = () => {
   const ts = Date.now()
   return {
     name: `Test Status ${ts}`,
@@ -43,7 +43,7 @@ export function generateStatusData() {
   }
 }
 
-export function generateEditedStatusData() {
+export const generateEditedStatusData = () => {
   const ts = Date.now()
   return {
     name: `Edited Status ${ts}`,
@@ -51,21 +51,21 @@ export function generateEditedStatusData() {
   }
 }
 
-export function generateLabelData() {
+export const generateLabelData = () => {
   const ts = Date.now()
   return {
     name: `Test Label ${ts}`,
   }
 }
 
-export function generateEditedLabelData() {
+export const generateEditedLabelData = () => {
   const ts = Date.now()
   return {
     name: `Edited Label ${ts}`,
   }
 }
 
-export function generateTaskData() {
+export const generateTaskData = () => {
   const ts = Date.now()
   return {
     title: `Test Task ${ts}`,
@@ -73,7 +73,7 @@ export function generateTaskData() {
   }
 }
 
-export function generateEditedTaskData() {
+export const generateEditedTaskData = () => {
   const ts = Date.now()
   return {
     title: `Edited Task ${ts}`,

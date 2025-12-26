@@ -45,8 +45,16 @@ export class TasksPage {
     }
   }
 
+  getSaveButton() {
+    return this.page.locator(SELECTORS.SAVE_BUTTON).first()
+  }
+
+  getExportButton() {
+    return this.page.locator(SELECTORS.EXPORT_BUTTON).first()
+  }
+
   async saveTask() {
-    await this.page.locator(SELECTORS.SAVE_BUTTON).first().click()
+    await this.getSaveButton().click()
   }
 
   getTaskCardContainerByTitle(title) {
@@ -259,5 +267,51 @@ export class TasksPage {
    */
   getStatusColumnLocators(statuses) {
     return statuses.map(status => this.page.getByText(status, { exact: true }))
+  }
+
+  /**
+   * Возвращает локатор фильтра статуса
+   * @param {string} statusName - Название статуса
+   * @returns {Object} Локатор combobox фильтра статуса
+   */
+  getFilterStatusLocator(statusName) {
+    return this.page.getByRole('combobox', { name: new RegExp(String.raw`Status.*${statusName}`, 'i') })
+  }
+
+  /**
+   * Получает текст на странице Show задачи
+   * @param {string} text - Текст для поиска
+   * @returns {Object} Локатор текста
+   */
+  getTaskShowText(text) {
+    return this.page.getByText(text, { exact: true })
+  }
+
+  /**
+   * Получает ссылку на странице Show задачи
+   * @param {string} linkText - Текст ссылки
+   * @returns {Object} Локатор ссылки
+   */
+  getTaskShowLink(linkText) {
+    return this.page.getByRole('link', { name: linkText })
+  }
+
+  /**
+   * Проверяет, что URL содержит путь к задаче
+   * @param {string|number} taskId - ID задачи
+   * @returns {Promise<boolean>} Результат проверки
+   */
+  async isTaskShowPage(taskId) {
+    const url = this.page.url()
+    return url.includes(`/#/tasks/${taskId}`)
+  }
+
+  /**
+   * Проверяет, что URL содержит путь к созданию задачи
+   * @returns {Promise<boolean>} Результат проверки
+   */
+  async isTaskCreatePage() {
+    const url = this.page.url()
+    return url.includes('/#/tasks/create')
   }
 }

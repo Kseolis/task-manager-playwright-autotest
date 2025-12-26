@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test'
 import { loginAsValidUser } from './helpers/authHelper.js'
 import { TasksPage } from './pages/TasksPage.js'
-import { TIMEOUTS, URLS, SELECTORS } from './helpers/constants.js'
+import { UsersPage } from './pages/UsersPage.js'
+import { TIMEOUTS } from './helpers/constants.js'
 import { generateTaskData, generateEditedTaskData } from './helpers/testData.js'
 
 test.beforeEach(async ({ page }) => {
@@ -84,8 +85,9 @@ test.describe('Tasks: канбан-доска', () => {
       await expect.poll(tasksPage.getTaskInStatusColumnChecker('To Review', 'Task 5'), { timeout: TIMEOUTS.MEDIUM }).toBe(true)
       await expect.poll(tasksPage.getTaskInStatusColumnChecker('Draft', 'Task 5'), { timeout: TIMEOUTS.MEDIUM }).toBe(false)
 
-      await page.goto(URLS.USERS)
-      await expect(page.locator(SELECTORS.TABLE)).toBeVisible()
+      const usersPage = new UsersPage(page)
+      await usersPage.goto()
+      await expect(usersPage.getTableLocator()).toBeVisible()
 
       await tasksPage.goto()
       await expect.poll(tasksPage.getTaskInStatusColumnChecker('To Review', 'Task 5'), { timeout: TIMEOUTS.MEDIUM }).toBe(true)
@@ -100,7 +102,7 @@ test.describe('Tasks: канбан-доска', () => {
       await expect(tasksPage.getTitleInput()).toBeVisible()
       await expect(tasksPage.getContentInput()).toBeVisible()
 
-      const saveButton = page.locator(SELECTORS.SAVE_BUTTON).first()
+      const saveButton = tasksPage.getSaveButton()
       await expect(saveButton).toBeVisible()
       await expect(saveButton).toBeDisabled()
 
@@ -151,9 +153,9 @@ test.describe('Tasks: канбан-доска', () => {
       await tasksPage.goto()
       await tasksPage.openTaskShowFromCard('Task 1')
 
-      await expect.poll(() => page.url().includes('/#/tasks/1'), { timeout: TIMEOUTS.MEDIUM }).toBe(true)
-      await expect(page.getByText('Task 1', { exact: true })).toBeVisible()
-      await expect(page.getByText('Description of task 1', { exact: true })).toBeVisible()
+      await expect.poll(() => tasksPage.isTaskShowPage(1), { timeout: TIMEOUTS.MEDIUM }).toBe(true)
+      await expect(tasksPage.getTaskShowText('Task 1')).toBeVisible()
+      await expect(tasksPage.getTaskShowText('Description of task 1')).toBeVisible()
     })
   })
 })

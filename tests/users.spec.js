@@ -38,7 +38,7 @@ test.describe('Создание пользователей', () => {
       usersPage,
       initialCount,
       userData.email,
-      (email) => usersPage.isUserVisible(email),
+      email => usersPage.isUserVisible(email),
     )
 
     const verification = await usersPage.verifyUserData(userData.email, userData)
@@ -60,7 +60,7 @@ test.describe('Просмотр списка пользователей', () => 
     await usersPage.goto()
     const rows = await usersPage.getAllUserRows()
 
-    await verifyRowsData(rows, (row) => usersPage.getUserRowData(row), ['email', 'firstName', 'lastName'])
+    await verifyRowsData(rows, row => usersPage.getUserRowData(row), ['email', 'firstName', 'lastName'])
   })
 })
 
@@ -89,7 +89,7 @@ test.describe('Редактирование пользователей', () => {
     await verifyEntityEdited(
       usersPage,
       editedData.email,
-      (email) => usersPage.isUserVisible(email),
+      email => usersPage.isUserVisible(email),
       (email, data) => usersPage.verifyUserData(email, data),
       editedData,
     )
@@ -123,7 +123,7 @@ test.describe('Удаление пользователей', () => {
       usersPage,
       initialCount,
       firstUserEmail,
-      (email) => usersPage.isUserVisible(email),
+      email => usersPage.isUserVisible(email),
     )
   })
 })

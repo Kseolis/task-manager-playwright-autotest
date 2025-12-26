@@ -11,7 +11,7 @@ import { TIMEOUTS, TEST_CONSTANTS } from './constants.js'
  * @param {Object} pageObject - Page Object
  * @returns {Object} Локатор таблицы
  */
-function getTableLocator(pageObject) {
+const getTableLocator = (pageObject) => {
   if (typeof pageObject.getTableLocator === 'function') {
     return pageObject.getTableLocator()
   }
@@ -26,13 +26,14 @@ function getTableLocator(pageObject) {
  * @param {boolean} options.checkSaveButton - Проверять ли кнопку сохранения (по умолчанию true)
  * @param {number} options.timeout - Таймаут для проверки полей (по умолчанию без таймаута, для edit - TIMEOUTS.SHORT)
  */
-export async function verifyFormVisible(form, fieldNames, options = {}) {
+export const verifyFormVisible = async (form, fieldNames, options = {}) => {
   const { checkSaveButton = true, timeout } = options
 
   for (const fieldName of fieldNames) {
     if (timeout) {
       await expect.soft(form[fieldName]).toBeVisible({ timeout })
-    } else {
+    }
+    else {
       await expect.soft(form[fieldName]).toBeVisible()
     }
   }
@@ -47,7 +48,7 @@ export async function verifyFormVisible(form, fieldNames, options = {}) {
  * @param {Object} form - Объект формы с полями для проверки
  * @param {Array<string>} fieldNames - Массив имен полей для проверки
  */
-export async function verifyCreateFormVisible(form, fieldNames) {
+export const verifyCreateFormVisible = async (form, fieldNames) => {
   await verifyFormVisible(form, fieldNames, { checkSaveButton: true })
 }
 
@@ -56,7 +57,7 @@ export async function verifyCreateFormVisible(form, fieldNames) {
  * @param {Object} form - Объект формы с полями для проверки
  * @param {Array<string>} fieldNames - Массив имен полей для проверки
  */
-export async function verifyEditFormVisible(form, fieldNames) {
+export const verifyEditFormVisible = async (form, fieldNames) => {
   await verifyFormVisible(form, fieldNames, {
     checkSaveButton: true,
     timeout: TIMEOUTS.SHORT,
@@ -70,7 +71,7 @@ export async function verifyEditFormVisible(form, fieldNames) {
  * @param {string|Object} identifier - Идентификатор созданной сущности
  * @param {Function} isVisibleMethod - Метод проверки видимости
  */
-export async function verifyEntityCreated(pageObject, initialCount, identifier, isVisibleMethod) {
+export const verifyEntityCreated = async (pageObject, initialCount, identifier, isVisibleMethod) => {
   await expect.poll(() => pageObject.getCount(), { timeout: TIMEOUTS.MEDIUM }).toBeGreaterThan(initialCount)
   await expect.poll(() => isVisibleMethod(identifier), { timeout: TIMEOUTS.MEDIUM }).toBe(true)
 }
@@ -79,7 +80,7 @@ export async function verifyEntityCreated(pageObject, initialCount, identifier, 
  * Проверяет, что список отображается и содержит элементы
  * @param {Object} pageObject - Page Object с методами goto, tableLocator, getCount
  */
-export async function verifyListDisplayed(pageObject) {
+export const verifyListDisplayed = async (pageObject) => {
   await pageObject.goto()
   const tableLocator = getTableLocator(pageObject)
   await expect(tableLocator).toBeVisible()
@@ -93,7 +94,7 @@ export async function verifyListDisplayed(pageObject) {
  * @param {Function} getRowDataMethod - Метод получения данных строки
  * @param {Array<string>} expectedFields - Массив ожидаемых полей
  */
-export async function verifyRowsData(rows, getRowDataMethod, expectedFields) {
+export const verifyRowsData = async (rows, getRowDataMethod, expectedFields) => {
   expect(rows.length).toBeGreaterThan(0)
 
   for (let i = 0; i < Math.min(rows.length, TEST_CONSTANTS.MAX_ROWS_TO_CHECK); i++) {
@@ -112,7 +113,7 @@ export async function verifyRowsData(rows, getRowDataMethod, expectedFields) {
  * @param {Function} verifyMethod - Метод верификации данных
  * @param {Object} expectedData - Ожидаемые данные
  */
-export async function verifyEntityEdited(pageObject, identifier, isVisibleMethod, verifyMethod, expectedData) {
+export const verifyEntityEdited = async (pageObject, identifier, isVisibleMethod, verifyMethod, expectedData) => {
   await expect.poll(() => isVisibleMethod(identifier), { timeout: TIMEOUTS.MEDIUM }).toBe(true)
 
   if (verifyMethod) {
@@ -130,7 +131,7 @@ export async function verifyEntityEdited(pageObject, identifier, isVisibleMethod
  * @param {string|Object} identifier - Идентификатор удаленной сущности
  * @param {Function} isVisibleMethod - Метод проверки видимости
  */
-export async function verifyEntityDeleted(pageObject, initialCount, identifier, isVisibleMethod) {
+export const verifyEntityDeleted = async (pageObject, initialCount, identifier, isVisibleMethod) => {
   expect(initialCount).toBeGreaterThan(0)
   await expect.poll(() => pageObject.getCount()).toBeLessThan(initialCount)
   await expect.poll(() => isVisibleMethod(identifier)).toBe(false)
@@ -141,7 +142,7 @@ export async function verifyEntityDeleted(pageObject, initialCount, identifier, 
  * @param {Object} pageObject - Page Object с методами getCount, selectAll, deleteAllSelected
  * @param {number} initialCount - Начальное количество элементов
  */
-export async function verifyBulkDelete(pageObject, initialCount) {
+export const verifyBulkDelete = async (pageObject, initialCount) => {
   await pageObject.goto()
   await pageObject.selectAll()
   await pageObject.deleteAllSelected()
@@ -153,6 +154,6 @@ export async function verifyBulkDelete(pageObject, initialCount) {
  * @param {Function} checkVisibility - Функция проверки видимости
  * @param {boolean} expectedValue - Ожидаемое значение видимости
  */
-export async function verifyTaskCardVisibility(checkVisibility, expectedValue = true) {
+export const verifyTaskCardVisibility = async (checkVisibility, expectedValue = true) => {
   await expect.poll(checkVisibility, { timeout: TIMEOUTS.MEDIUM }).toBe(expectedValue)
 }

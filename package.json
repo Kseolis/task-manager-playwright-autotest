@@ -16,7 +16,12 @@
     "test:headed": "playwright test --headed",
     "test:chromium": "playwright test --project=chromium",
     "test:firefox": "playwright test --project=firefox",
-    "test:webkit": "playwright test --project=webkit"
+    "test:webkit": "playwright test --project=webkit",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:unit:coverage": "vitest run --coverage",
+    "test:all": "npm run test:unit && npm test",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@hexlet/testing-task-manager": "^0.1.5",
@@ -37,7 +42,11 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.11",
     "sonarqube-scanner": "^4.3.2",
-    "vite": "^7.2.4"
+    "vite": "^7.2.4",
+    "vitest": "^2.1.8",
+    "@vitest/coverage-v8": "^2.1.8"
   }
 }

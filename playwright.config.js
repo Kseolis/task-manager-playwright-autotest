@@ -16,8 +16,10 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI
-    ? [['list'], ['html', { open: 'never' }]]
-    : [['list'], ['html']],
+    ? [['list'], ['html', { open: 'never' }], ['./tests/helpers/customReporter.js']]
+    : [['list'], ['html'], ['./tests/helpers/customReporter.js']],
+  globalSetup: './tests/global-setup.js',
+  globalTeardown: './tests/global-teardown.js',
   use: {
     baseURL: process.env.BASE_URL || 'http://localhost:5173',
     trace: 'on-first-retry',

@@ -12,9 +12,19 @@ import {
   verifyBulkDelete,
   verifyEditFormVisible,
 } from './helpers/testHelpers.js'
+import { UserFactory } from './factories/UserFactory.js'
+import { createIsolatedTestContext } from './helpers/testIsolation.js'
 
 test.beforeEach(async ({ page }) => {
   await loginAsValidUser(page)
+})
+
+test.afterEach(async ({ page }) => {
+  // Очистка состояния браузера после каждого теста
+  await page.evaluate(() => {
+    localStorage.clear()
+    sessionStorage.clear()
+  })
 })
 
 test.describe('Создание пользователей', () => {
@@ -29,10 +39,22 @@ test.describe('Создание пользователей', () => {
   })
 
   test('создание нового пользователя с валидными данными', async ({ page }) => {
+    const context = createIsolatedTestContext(page)
     const usersPage = new UsersPage(page)
     const userData = generateUserData()
 
-    const { initialCount } = await usersPage.createUser(userData)
+    await usersPage.goto()
+    const initialCount = await usersPage.getUserCount()
+
+    await usersPage.clickCreate()
+    await usersPage.fillUserForm(userData)
+    await usersPage.saveUser()
+    await usersPage.goto()
+
+    // Регистрируем для очистки
+    const createdUser = await usersPage.getUserRowByEmail(userData.email)
+    const userId = await usersPage.getIdFromRow(createdUser)
+    context.registry.register('users', userId)
 
     await verifyEntityCreated(
       usersPage,
@@ -45,6 +67,8 @@ test.describe('Создание пользователей', () => {
     await expect.soft(verification.email).toBe(true)
     await expect.soft(verification.firstName).toBe(true)
     await expect.soft(verification.lastName).toBe(true)
+
+    await context.cleanup()
   })
 })
 
@@ -66,26 +90,37 @@ test.describe('Просмотр списка пользователей', () => 
 
 test.describe('Редактирование пользователей', () => {
   test('форма редактирования пользователя отображается правильно', async ({ page }) => {
+    const context = createIsolatedTestContext(page)
     const usersPage = new UsersPage(page)
 
-    await usersPage.goto()
-    const firstUserEmail = await usersPage.getFirstUserEmail()
-    await expect(firstUserEmail).toBeTruthy()
+    // Создаем пользователя для редактирования
+    const user = await UserFactory.create().withUniqueData().create()
+    context.registry.register('users', user.id)
 
-    await usersPage.clickEditUser(firstUserEmail)
+    await usersPage.goto()
+    await usersPage.clickEditUser(user.email)
     const form = await usersPage.isEditFormVisible()
     await verifyEditFormVisible(form, ['email', 'firstName', 'lastName'])
+
+    await context.cleanup()
   })
 
   test('изменение данных пользователя сохраняется корректно', async ({ page }) => {
+    const context = createIsolatedTestContext(page)
     const usersPage = new UsersPage(page)
+
+    // Создаем пользователя для редактирования
+    const user = await UserFactory.create().withUniqueData().create()
+    context.registry.register('users', user.id)
+
     const editedData = generateEditedUserData()
 
     await usersPage.goto()
-    const firstUserEmail = await usersPage.getFirstUserEmail()
-    await expect(firstUserEmail).toBeTruthy()
+    await usersPage.clickEditUser(user.email)
+    await usersPage.fillUserForm(editedData)
+    await usersPage.saveUser()
+    await usersPage.goto()
 
-    await usersPage.editUser(firstUserEmail, editedData)
     await verifyEntityEdited(
       usersPage,
       editedData.email,
@@ -93,16 +128,20 @@ test.describe('Редактирование пользователей', () => {
       (email, data) => usersPage.verifyUserData(email, data),
       editedData,
     )
+
+    await context.cleanup()
   })
 
   test('валидация данных при редактировании пользователя', async ({ page }) => {
+    const context = createIsolatedTestContext(page)
     const usersPage = new UsersPage(page)
 
-    await usersPage.goto()
-    const firstUserEmail = await usersPage.getFirstUserEmail()
-    await expect(firstUserEmail).toBeTruthy()
+    // Создаем пользователя для редактирования
+    const user = await UserFactory.create().withUniqueData().create()
+    context.registry.register('users', user.id)
 
-    await usersPage.clickEditUser(firstUserEmail)
+    await usersPage.goto()
+    await usersPage.clickEditUser(user.email)
 
     const result = await usersPage.fillInvalidEmail('invalid-email')
 
@@ -110,21 +149,32 @@ test.describe('Редактирование пользователей', () => {
     await expect.soft(isEditPage).toBe(true)
     const inputValue = await result.getInputValue()
     await expect.soft(inputValue).toBe('invalid-email')
+
+    await context.cleanup()
   })
 })
 
 test.describe('Удаление пользователей', () => {
   test('удаление одного пользователя', async ({ page }) => {
+    const context = createIsolatedTestContext(page)
     const usersPage = new UsersPage(page)
 
-    const { initialCount, firstUserEmail } = await usersPage.deleteFirstUser()
+    // Создаем пользователя для удаления
+    const user = await UserFactory.create().withUniqueData().create()
+    // Не регистрируем в registry, так как удаляем его в тесте
+
+    await usersPage.goto()
+    const initialCount = await usersPage.getUserCount()
+    await usersPage.deleteUser(user.email)
 
     await verifyEntityDeleted(
       usersPage,
       initialCount,
-      firstUserEmail,
+      user.email,
       email => usersPage.isUserVisible(email),
     )
+
+    await context.cleanup()
   })
 })
 

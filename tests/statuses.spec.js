@@ -12,9 +12,18 @@ import {
   verifyBulkDelete,
   verifyEditFormVisible,
 } from './helpers/testHelpers.js'
+import { StatusFactory } from './factories/StatusFactory.js'
+import { createIsolatedTestContext } from './helpers/testIsolation.js'
 
 test.beforeEach(async ({ page }) => {
   await loginAsValidUser(page)
+})
+
+test.afterEach(async ({ page }) => {
+  await page.evaluate(() => {
+    localStorage.clear()
+    sessionStorage.clear()
+  })
 })
 
 test.describe('Создание статусов', () => {
@@ -65,26 +74,37 @@ test.describe('Просмотр списка статусов', () => {
 
 test.describe('Редактирование статусов', () => {
   test('форма редактирования статуса отображается правильно', async ({ page }) => {
+    const context = createIsolatedTestContext(page)
     const statusesPage = new StatusesPage(page)
 
-    await statusesPage.goto()
-    const firstStatusSlug = await statusesPage.getFirstStatusSlug()
-    await expect(firstStatusSlug).toBeTruthy()
+    // Создаем статус для редактирования
+    const status = await StatusFactory.create().withUniqueData().create()
+    context.registry.register('statuses', status.id)
 
-    await statusesPage.clickEditStatus(firstStatusSlug)
+    await statusesPage.goto()
+    await statusesPage.clickEditStatus(status.slug)
     const form = await statusesPage.isEditFormVisible()
     await verifyEditFormVisible(form, ['name', 'slug'])
+
+    await context.cleanup()
   })
 
   test('изменение данных статуса сохраняется корректно', async ({ page }) => {
+    const context = createIsolatedTestContext(page)
     const statusesPage = new StatusesPage(page)
+
+    // Создаем статус для редактирования
+    const status = await StatusFactory.create().withUniqueData().create()
+    context.registry.register('statuses', status.id)
+
     const editedData = generateEditedStatusData()
 
     await statusesPage.goto()
-    const firstStatusSlug = await statusesPage.getFirstStatusSlug()
-    await expect(firstStatusSlug).toBeTruthy()
+    await statusesPage.clickEditStatus(status.slug)
+    await statusesPage.fillStatusForm(editedData)
+    await statusesPage.saveStatus()
+    await statusesPage.goto()
 
-    await statusesPage.editStatus(firstStatusSlug, editedData)
     await verifyEntityEdited(
       statusesPage,
       editedData.slug,
@@ -92,21 +112,31 @@ test.describe('Редактирование статусов', () => {
       (slug, data) => statusesPage.verifyStatusData(slug, data),
       editedData,
     )
+
+    await context.cleanup()
   })
 })
 
 test.describe('Удаление статусов', () => {
   test('удаление одного статуса', async ({ page }) => {
+    const context = createIsolatedTestContext(page)
     const statusesPage = new StatusesPage(page)
 
-    const { initialCount, firstStatusSlug } = await statusesPage.deleteFirstStatus()
+    // Создаем статус для удаления
+    const status = await StatusFactory.create().withUniqueData().create()
+
+    await statusesPage.goto()
+    const initialCount = await statusesPage.getStatusCount()
+    await statusesPage.deleteStatus(status.slug)
 
     await verifyEntityDeleted(
       statusesPage,
       initialCount,
-      firstStatusSlug,
+      status.slug,
       slug => statusesPage.isStatusVisible(slug),
     )
+
+    await context.cleanup()
   })
 })
 

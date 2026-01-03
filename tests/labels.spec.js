@@ -12,9 +12,18 @@ import {
   verifyBulkDelete,
   verifyEditFormVisible,
 } from './helpers/testHelpers.js'
+import { LabelFactory } from './factories/LabelFactory.js'
+import { createIsolatedTestContext } from './helpers/testIsolation.js'
 
 test.beforeEach(async ({ page }) => {
   await loginAsValidUser(page)
+})
+
+test.afterEach(async ({ page }) => {
+  await page.evaluate(() => {
+    localStorage.clear()
+    sessionStorage.clear()
+  })
 })
 
 test.describe('Создание меток', () => {
@@ -75,26 +84,37 @@ test.describe('Просмотр списка меток', () => {
 
 test.describe('Редактирование меток', () => {
   test('форма редактирования метки отображается правильно', async ({ page }) => {
+    const context = createIsolatedTestContext(page)
     const labelsPage = new LabelsPage(page)
 
-    await labelsPage.goto()
-    const firstLabelName = await labelsPage.getFirstLabelName()
-    await expect(firstLabelName).toBeTruthy()
+    // Создаем метку для редактирования
+    const label = await LabelFactory.create().withUniqueName().create()
+    context.registry.register('labels', label.id)
 
-    await labelsPage.clickEditLabel(firstLabelName)
+    await labelsPage.goto()
+    await labelsPage.clickEditLabel(label.name)
     const form = await labelsPage.isEditFormVisible()
     await verifyEditFormVisible(form, ['name'])
+
+    await context.cleanup()
   })
 
   test('изменение данных метки сохраняется корректно', async ({ page }) => {
+    const context = createIsolatedTestContext(page)
     const labelsPage = new LabelsPage(page)
+
+    // Создаем метку для редактирования
+    const label = await LabelFactory.create().withUniqueName().create()
+    context.registry.register('labels', label.id)
+
     const editedData = generateEditedLabelData()
 
     await labelsPage.goto()
-    const firstLabelName = await labelsPage.getFirstLabelName()
-    await expect(firstLabelName).toBeTruthy()
+    await labelsPage.clickEditLabel(label.name)
+    await labelsPage.fillLabelForm(editedData)
+    await labelsPage.saveLabel()
+    await labelsPage.goto()
 
-    await labelsPage.editLabel(firstLabelName, editedData)
     await verifyEntityEdited(
       labelsPage,
       editedData.name,
@@ -102,21 +122,31 @@ test.describe('Редактирование меток', () => {
       (name, data) => labelsPage.verifyLabelData(name, data),
       editedData,
     )
+
+    await context.cleanup()
   })
 })
 
 test.describe('Удаление меток', () => {
   test('удаление одной метки', async ({ page }) => {
+    const context = createIsolatedTestContext(page)
     const labelsPage = new LabelsPage(page)
 
-    const { initialCount, firstLabelName } = await labelsPage.deleteFirstLabel()
+    // Создаем метку для удаления
+    const label = await LabelFactory.create().withUniqueName().create()
+
+    await labelsPage.goto()
+    const initialCount = await labelsPage.getLabelCount()
+    await labelsPage.deleteLabel(label.name)
 
     await verifyEntityDeleted(
       labelsPage,
       initialCount,
-      firstLabelName,
+      label.name,
       name => labelsPage.isLabelVisible(name),
     )
+
+    await context.cleanup()
   })
 })
 

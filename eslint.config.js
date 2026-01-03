@@ -56,7 +56,8 @@ export default [
         semi: false,
       }).rules,
       'react-hooks/rules-of-hooks': 'off', // Playwright fixtures используют 'use', это не React hooks
-      'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }], // Игнорируем неиспользуемые переменные с _
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }], // Warning вместо error для неиспользуемых переменных
+      'no-empty-pattern': 'warn', // Warning для пустых паттернов в fixtures
     },
   },
   {

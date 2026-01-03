@@ -14,7 +14,7 @@ export const test = base.extend({
   /**
    * API клиент для управления тестовыми данными
    */
-  apiClient: async ({}, use) => {
+  apiClient: async (_context, use) => {
     const client = createApiClient()
     await use(client)
   },

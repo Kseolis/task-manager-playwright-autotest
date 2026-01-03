@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { TaskFactory } from '../../../factories/TaskFactory.js'
+import { TaskFactory } from '../../factories/TaskFactory.js'
 
 describe('TaskFactory', () => {
   describe('create', () => {

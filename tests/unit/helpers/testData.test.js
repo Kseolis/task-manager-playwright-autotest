@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { generateUserData, _generateEditedUserData, generateTaskData } from '../../../helpers/testData.js'
+import { generateUserData, generateTaskData } from '../../helpers/testData.js'
 
 describe('testData helpers', () => {
   describe('generateUserData', () => {

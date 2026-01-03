@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { TestDataRegistry, _cleanupRegisteredEntities } from '../../../helpers/testIsolation.js'
+import { TestDataRegistry } from '../../helpers/testIsolation.js'
 
 describe('TestDataRegistry', () => {
   describe('register', () => {

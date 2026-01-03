@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { Logger, LogLevel, createLogger } from '../../../helpers/logger.js'
+import { LogLevel, createLogger } from '../../helpers/logger.js'
 
 describe('Logger', () => {
   let logger

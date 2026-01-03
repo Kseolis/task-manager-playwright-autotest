@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach } from 'vitest'
-import { UserFactory } from '../../../factories/UserFactory.js'
+import { describe, it, expect } from 'vitest'
+import { UserFactory } from '../../factories/UserFactory.js'
 
 describe('UserFactory', () => {
   describe('create', () => {

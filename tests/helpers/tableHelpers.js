@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import { expect } from '@playwright/test'
 import { SELECTORS, COLUMN_INDEXES } from './constants.js'
 

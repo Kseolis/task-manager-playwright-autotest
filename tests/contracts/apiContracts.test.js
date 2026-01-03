@@ -14,7 +14,7 @@ test.describe('API Contracts', () => {
     try {
       await apiClient.login(testUsers.valid.login, testUsers.valid.password)
     }
-    catch (error) {
+    catch (_error) {
       // Игнорируем
     }
   })
@@ -54,7 +54,7 @@ test.describe('API Contracts', () => {
       try {
         await apiClient.deleteUser(user.id)
       }
-      catch (error) {
+      catch (_error) {
         // Игнорируем
       }
     })
@@ -93,7 +93,7 @@ test.describe('API Contracts', () => {
       try {
         await apiClient.deleteTask(task.id)
       }
-      catch (error) {
+      catch (_error) {
         // Игнорируем
       }
     })

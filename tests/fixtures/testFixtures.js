@@ -47,7 +47,7 @@ export const test = base.extend({
         try {
           await apiClient.deleteTask(taskId)
         }
-        catch (error) {
+        catch (_error) {
           console.warn(`Failed to cleanup task ${taskId}:`, error.message)
         }
       }
@@ -56,7 +56,7 @@ export const test = base.extend({
         try {
           await apiClient.deleteLabel(labelId)
         }
-        catch (error) {
+        catch (_error) {
           console.warn(`Failed to cleanup label ${labelId}:`, error.message)
         }
       }
@@ -65,7 +65,7 @@ export const test = base.extend({
         try {
           await apiClient.deleteStatus(statusId)
         }
-        catch (error) {
+        catch (_error) {
           console.warn(`Failed to cleanup status ${statusId}:`, error.message)
         }
       }
@@ -74,7 +74,7 @@ export const test = base.extend({
         try {
           await apiClient.deleteUser(userId)
         }
-        catch (error) {
+        catch (_error) {
           console.warn(`Failed to cleanup user ${userId}:`, error.message)
         }
       }
@@ -126,7 +126,7 @@ export const testWithData = base.extend({
     try {
       await apiClient.deleteUser(user.id)
     }
-    catch (error) {
+    catch (_error) {
       // Игнорируем ошибки, если уже удалено
     }
   },
@@ -146,7 +146,7 @@ export const testWithData = base.extend({
     try {
       await apiClient.deleteStatus(status.id)
     }
-    catch (error) {
+    catch (_error) {
       // Игнорируем ошибки
     }
   },
@@ -165,7 +165,7 @@ export const testWithData = base.extend({
     try {
       await apiClient.deleteLabel(label.id)
     }
-    catch (error) {
+    catch (_error) {
       // Игнорируем ошибки
     }
   },
@@ -185,7 +185,7 @@ export const testWithData = base.extend({
     try {
       await apiClient.deleteTask(task.id)
     }
-    catch (error) {
+    catch (_error) {
       // Игнорируем ошибки
     }
   },
